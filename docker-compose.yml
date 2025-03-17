@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # PostgreSQL database
+  postgres:
+    image: postgres:14-alpine
+    container_name: notion-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: notion_clone
+      POSTGRES_USER: notionuser
+      POSTGRES_PASSWORD: notionpass
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # PHP Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: notion-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/uploads:/var/www/html/uploads
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: notion_clone
+      DB_USER: notionuser
+      DB_PASS: notionpass
+      APP_ENV: development
+      APP_DEBUG: 'true'
+      APP_URL: http://localhost:8000
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_key_here}
+      JWT_EXPIRATION: 86400
+      UPLOAD_DIR: uploads
+      WEBSOCKET_PORT: 8080
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: notion-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      REACT_APP_API_URL: http://localhost:8000/api
+      REACT_APP_WS_URL: ws://localhost:8080
+    ports:
+      - "3000:3000"
+
+  # Adminer for database management (optional)
+  adminer:
+    image: adminer
+    container_name: notion-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: dracula
+
+volumes:
+  postgres-data:
