@@ -1,8 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-// Constants
-const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
-const WS_BASE_URL = process.env.REACT_APP_WS_URL || `ws://${window.location.host}:8080`;
+// Vite exposes env vars to the browser only via import.meta.env with the VITE_ prefix.
+// (process.env.* / REACT_APP_* is a Create-React-App pattern and does not work in Vite.)
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const WS_BASE_URL = import.meta.env.VITE_WS_URL || `ws://${window.location.host}:8080`;
 
 // Create a configured axios instance
 const api: AxiosInstance = axios.create({
