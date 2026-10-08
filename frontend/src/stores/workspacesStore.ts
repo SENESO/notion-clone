@@ -7,6 +7,7 @@ export interface Workspace {
   description?: string;
   icon?: string;
   owner_id: string;
+  owner?: { id: string; name: string; email?: string } | null;
   created_at: string;
   updated_at: string;
 }
