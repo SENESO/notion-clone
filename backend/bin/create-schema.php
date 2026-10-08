@@ -13,7 +13,7 @@ $dotenv->load();
 
 // Set up Doctrine ORM
 $isDevMode = $_ENV['APP_ENV'] === 'development';
-$paths = [__DIR__ . '/../src/models/entities'];
+$paths = [__DIR__ . '/../src/Models/Entities'];
 $dbParams = [
     'driver'   => 'pdo_pgsql',
     'host'     => $_ENV['DB_HOST'],
