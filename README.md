@@ -16,23 +16,18 @@ This project is a full-stack clone of Notion.com, implementing the core function
 ## Project Structure
 
 ```
-notion-php-clone/
+notion-clone/
 ├── backend/              # PHP backend (Slim Framework)
-│   ├── bin/              # CLI scripts
-│   ├── logs/             # Application logs
+│   ├── bin/              # CLI scripts (schema setup, websocket server)
 │   ├── public/           # Public files and entry point
 │   ├── src/              # Source code
 │   │   ├── config/       # Configuration files
-│   │   ├── controllers/  # Controller classes
-│   │   ├── middlewares/  # Middleware classes
-│   │   ├── models/       # Data models
+│   │   ├── Controllers/  # Controller classes
+│   │   ├── Models/       # Doctrine entities
 │   │   ├── routes/       # Route definitions
-│   │   ├── services/     # Service classes
-│   │   ├── utils/        # Utility functions
 │   │   └── WebSocket/    # WebSocket server
-│   ├── uploads/          # File uploads
-│   ├── vendor/           # Dependencies
-│   ├── .env              # Environment variables
+│   ├── uploads/          # File uploads (created at runtime)
+│   ├── .env.example      # Example environment variables
 │   ├── composer.json     # Composer configuration
 │   └── Dockerfile        # Docker config for backend
 │
@@ -82,13 +77,14 @@ notion-php-clone/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/notion-php-clone.git
-   cd notion-php-clone
+   git clone https://github.com/SENESO/notion-clone.git
+   cd notion-clone
    ```
 
-2. Create a `.env` file for the Docker environment:
+2. (Recommended) Change the default dev secrets in `docker-compose.yml`
+   (`POSTGRES_PASSWORD` and `JWT_SECRET`). Generate a strong JWT secret with:
    ```bash
-   echo "JWT_SECRET=your_secure_jwt_secret_here" > .env
+   openssl rand -hex 32
    ```
 
 3. Start the application using Docker Compose:
@@ -112,7 +108,7 @@ notion-php-clone/
 
 1. Navigate to the backend directory:
    ```bash
-   cd notion-php-clone/backend
+   cd notion-clone/backend
    ```
 
 2. Install dependencies:
@@ -146,7 +142,7 @@ notion-php-clone/
 
 1. Navigate to the frontend directory:
    ```bash
-   cd notion-php-clone/frontend
+   cd notion-clone/frontend
    ```
 
 2. Install dependencies:
@@ -154,10 +150,15 @@ notion-php-clone/
    npm install
    ```
 
-3. Create an `.env` file with API and WebSocket URLs:
+3. Create an `.env` file from the example (Vite only reads variables
+   prefixed with `VITE_`):
+   ```bash
+   cp .env.example .env
    ```
-   REACT_APP_API_URL=http://localhost:8000/api
-   REACT_APP_WS_URL=ws://localhost:8080
+   The defaults already point at the local backend:
+   ```
+   VITE_API_URL=http://localhost:8000/api
+   VITE_WS_URL=ws://localhost:8080
    ```
 
 4. Start the development server:
