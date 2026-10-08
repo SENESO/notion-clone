@@ -14,7 +14,7 @@ interface KanbanColumn {
     title: string;
     color?: string;
   };
-  children: KanbanItem[];
+  children?: KanbanItem[];
 }
 
 interface KanbanItem {

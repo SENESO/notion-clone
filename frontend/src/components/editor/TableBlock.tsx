@@ -9,7 +9,7 @@ import { useBlocksStore } from '@/stores/blocksStore';
 interface Column {
   id: string;
   name: string;
-  type: 'text' | 'number' | 'select' | 'date' | 'checkbox';
+  type: 'text' | 'number' | 'select' | 'date' | 'checkbox' | 'person' | 'file';
 }
 
 interface Row {
