@@ -5,16 +5,20 @@ use Tuupola\Middleware\JwtAuthentication;
 
 /** @var App $app */
 
-// CORS middleware
+// CORS middleware — only origins on the allowlist get credentialed access.
+// Never reflect an arbitrary Origin with Allow-Credentials: true, or any
+// website could make authenticated cross-origin calls as the user.
 $app->add(function ($request, $handler) {
     $response = $handler->handle($request);
-    // Echo the request Origin instead of '*' so credentialed requests are
-    // accepted by browsers ('*' + Allow-Credentials is rejected by the spec).
+    $allowedOrigins = array_filter(array_map('trim', explode(',', $_ENV['CORS_ALLOWED_ORIGINS'] ?? '')));
+    if ($allowedOrigins === []) {
+        // Sensible local-dev default; set CORS_ALLOWED_ORIGINS in production.
+        $allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
+    }
     $origin = $request->getHeaderLine('Origin');
-    $response = $response->withHeader(
-        'Access-Control-Allow-Origin',
-        $origin !== '' ? $origin : '*'
-    );
+    if ($origin !== '' && in_array($origin, $allowedOrigins, true)) {
+        $response = $response->withHeader('Access-Control-Allow-Origin', $origin);
+    }
     return $response
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')

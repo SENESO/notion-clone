@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: notion_clone
       POSTGRES_USER: notionuser
-      POSTGRES_PASSWORD: notionpass
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your .env file}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
@@ -36,7 +36,7 @@ services:
       APP_ENV: development
       APP_DEBUG: 'true'
       APP_URL: http://localhost:8000
-      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_key_here}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in your .env file}
       JWT_EXPIRATION: 86400
       UPLOAD_DIR: uploads
       WEBSOCKET_PORT: 8080

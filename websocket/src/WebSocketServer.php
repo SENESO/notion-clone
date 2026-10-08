@@ -129,7 +129,11 @@ class WebSocketServer implements MessageComponentInterface
         try {
             // Verify JWT token
             $jwt = $data['token'];
-            $jwtSecret = $_ENV['JWT_SECRET'] ?? 'development_jwt_secret';
+            $jwtSecret = $_ENV['JWT_SECRET'] ?? null;
+            if (!$jwtSecret) {
+                $client->send(json_encode(['error' => 'Server misconfigured: JWT_SECRET is not set']));
+                return;
+            }
             $decoded = JWT::decode($jwt, new Key($jwtSecret, 'HS256'));
 
             // Associate user ID with connection
