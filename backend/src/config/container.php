@@ -12,7 +12,7 @@ return [
     EntityManager::class => function (ContainerInterface $container) {
         $isDevMode = $_ENV['APP_ENV'] === 'development';
 
-        $paths = [__DIR__ . '/../models/entities'];
+        $paths = [__DIR__ . '/../Models/Entities'];
         $dbParams = [
             'driver'   => 'pdo_pgsql',
             'host'     => $_ENV['DB_HOST'],

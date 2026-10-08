@@ -8,8 +8,14 @@ use Tuupola\Middleware\JwtAuthentication;
 // CORS middleware
 $app->add(function ($request, $handler) {
     $response = $handler->handle($request);
+    // Echo the request Origin instead of '*' so credentialed requests are
+    // accepted by browsers ('*' + Allow-Credentials is rejected by the spec).
+    $origin = $request->getHeaderLine('Origin');
+    $response = $response->withHeader(
+        'Access-Control-Allow-Origin',
+        $origin !== '' ? $origin : '*'
+    );
     return $response
-        ->withHeader('Access-Control-Allow-Origin', '*')
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
         ->withHeader('Access-Control-Allow-Credentials', 'true');
