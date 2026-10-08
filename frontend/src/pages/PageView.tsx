@@ -106,7 +106,7 @@ export default function PageView() {
 
   // Handle creating a new block
   const handleCreateBlock = async (type: string, position?: number) => {
-    if (!pageId || !currentPage) return;
+    if (!pageId || !currentPage) return null;
 
     try {
       // Default content based on block type
@@ -177,7 +177,7 @@ export default function PageView() {
   }
 
   // Get page blocks
-  const pageContent = pageBlocks[pageId] || [];
+  const pageContent = (pageId ? pageBlocks[pageId] : undefined) || [];
 
   return (
     <div className={cn(

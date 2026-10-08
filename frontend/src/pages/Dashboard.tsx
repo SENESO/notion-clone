@@ -31,8 +31,12 @@ type NewWorkspaceFormValues = z.infer<typeof newWorkspaceSchema>;
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { workspaces, currentWorkspace, fetchWorkspaces, createWorkspace, isLoading: workspacesLoading } = useWorkspacesStore();
-  const { pages, fetchPages, createPage, isLoading: pagesLoading } = usePagesStore();
+  const { workspaces: workspacesRecord, currentWorkspace, fetchWorkspaces, createWorkspace, isLoading: workspacesLoading } = useWorkspacesStore();
+  const { pages: pagesRecord, fetchWorkspacePages, createPage, isLoading: pagesLoading } = usePagesStore();
+
+  // Stores keep entities in id-keyed records; the UI needs arrays.
+  const workspaces = Object.values(workspacesRecord);
+  const pages = Object.values(pagesRecord);
 
   const [isNewPageDialogOpen, setIsNewPageDialogOpen] = useState(false);
   const [isNewWorkspaceDialogOpen, setIsNewWorkspaceDialogOpen] = useState(false);
@@ -62,9 +66,9 @@ export default function Dashboard() {
   // Fetch pages when current workspace changes
   useEffect(() => {
     if (currentWorkspace) {
-      fetchPages(currentWorkspace.id).catch(console.error);
+      fetchWorkspacePages(currentWorkspace.id).catch(console.error);
     }
-  }, [currentWorkspace, fetchPages]);
+  }, [currentWorkspace, fetchWorkspacePages]);
 
   // Handle page creation
   const handleCreatePage = async (data: NewPageFormValues) => {
@@ -187,7 +191,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <p className="text-sm text-muted-foreground">
-                    Owner: {workspace.owner.name}
+                    Owner: {workspace.owner?.name ?? 'Unknown'}
                   </p>
                 </CardContent>
               </Card>
