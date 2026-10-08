@@ -28,8 +28,12 @@ type NewPageFormValues = z.infer<typeof newPageSchema>;
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
-  const { workspaces, currentWorkspace, fetchWorkspaces, setCurrentWorkspace } = useWorkspacesStore();
-  const { pages, fetchPages, createPage } = usePagesStore();
+  const { workspaces: workspacesRecord, currentWorkspace, fetchWorkspaces, setCurrentWorkspace } = useWorkspacesStore();
+  const { pages: pagesRecord, fetchWorkspacePages, createPage } = usePagesStore();
+
+  // Stores keep entities in id-keyed records; the UI needs arrays.
+  const workspaces = Object.values(workspacesRecord);
+  const pages = Object.values(pagesRecord);
 
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<Record<string, boolean>>({});
   const [newPageDialogOpen, setNewPageDialogOpen] = useState(false);
@@ -67,7 +71,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       setCurrentWorkspace(workspace);
       // If expanding, fetch pages
       if (!expandedWorkspaces[workspaceId]) {
-        fetchPages(workspaceId).catch(console.error);
+        fetchWorkspacePages(workspaceId).catch(console.error);
       }
     }
   };
